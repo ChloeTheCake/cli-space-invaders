@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "../include/util.h"
+#include <ncurses.h>
 
 // Woah globals
 static NODE* last = NULL;
@@ -85,6 +86,9 @@ void removeAtIndex(int index) {
     }
 }
 
+void wDebugPrint(const char* msg) {
+    mvprintw(5, 5, msg);
+}
 
 
 

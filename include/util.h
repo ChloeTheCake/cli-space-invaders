@@ -22,3 +22,4 @@ NODE* spawnProjectile(int posX, int posY, int dmg, int speed);
 void addProjectileToList(NODE* proj);
 struct projectile* getListIndex(int index, NODE* lastNode);
 void removeAtIndex(int index);
+void wDebugPrint(const char* msg);

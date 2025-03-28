@@ -69,14 +69,14 @@ int main() {
     game.shouldExit = false;
     while(!game.shouldExit) {
         procUserControl(win, &game); // right now this is rendering changes
-        game.projectiles = spawnProjectile(1, 1, 1, 1);
+        // game.projectiles = spawnProjectile(1, 1, 1, 1);
         update(&game);
         render(win, &game);
 
         /*modifyValuesOnUserInput*/
         /*RenderChanges*/
 
-        usleep(50000);
+        usleep(10000);
     }
     
 
@@ -88,25 +88,26 @@ int main() {
 // ##################################################################
 
 void render(WINDOW* win, struct game* game) {
-    assert(game->projectiles != NULL);
     int bottom = getmaxy(win) - 4;
 
-    NODE* first = game->projectiles->next;
-    NODE* currentNode = game->projectiles->next;
+    if (game->projectiles != NULL) {
+        NODE* first = game->projectiles->next;
+        NODE* currentNode = game->projectiles->next;
 
-    erase();
-    while(currentNode != first) {
-        mvaddstr(currentNode->data.posY, currentNode->data.posX, "|");
+        erase();
+        while(currentNode != first) {
+            mvaddstr(currentNode->data.posY, currentNode->data.posX, "|");
 
-        currentNode = currentNode->next;
+            currentNode = currentNode->next;
+        }
     }
-
     mvaddstr(bottom, game->player.posX, "_/|\\_");
-    usleep(10000);
 }
 
 void update(struct game* game) {
-    assert(game->projectiles != NULL);
+    if(game->projectiles == NULL) {
+        return;
+    }
 
     NODE* first = game->projectiles->next;
     NODE* currentNode = game->projectiles->next;
