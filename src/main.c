@@ -43,7 +43,7 @@ struct game {
     struct proc proc;
 
     struct player player;
-    struct node* projectiles;
+    struct nodeContainer projectiles;
 
     bool shouldExit;
 };
@@ -65,6 +65,8 @@ int main() {
     game.player.health = 100;
     game.player.dirX = 0;
     game.player.posX = 0; // center this sometime?????
+    game.projectiles.first = NULL;
+    game.projectiles.last = NULL;
 
     game.shouldExit = false;
     while(!game.shouldExit) {
@@ -89,15 +91,16 @@ int main() {
 
 void render(WINDOW* win, struct game* game) {
     int bottom = getmaxy(win) - 4;
+    erase();
 
-    if (game->projectiles != NULL) {
-        NODE* first = game->projectiles->next;
-        NODE* currentNode = game->projectiles->next;
+    if (game->projectiles.first != NULL && game->projectiles.last != NULL) {
+        NODE* currentNode = game->projectiles.first;
 
-        erase();
-        while(currentNode != first) {
-            mvaddstr(currentNode->data.posY, currentNode->data.posX, "|");
-
+        while(1) {
+            mvaddstr(currentNode->data.posY, currentNode->data.posX, "+");
+            if (currentNode == game->projectiles.last) {
+                break;
+            }
             currentNode = currentNode->next;
         }
     }
@@ -105,19 +108,17 @@ void render(WINDOW* win, struct game* game) {
 }
 
 void update(struct game* game) {
-    if(game->projectiles == NULL) {
-        return;
+    if (game->projectiles.first != NULL && game->projectiles.last != NULL) {
+        NODE* currentNode = game->projectiles.first;
+
+        while(1) {
+            currentNode->data.posY += currentNode->data.speed;
+            if (currentNode == game->projectiles.last) {
+                break;
+            }
+            currentNode = currentNode->next;
+        }
     }
-
-    NODE* first = game->projectiles->next;
-    NODE* currentNode = game->projectiles->next;
-
-    while(currentNode != first) {
-        currentNode->data.posY -= currentNode->data.speed;
-
-        currentNode = currentNode->next;
-    }
-
 }
 
 
@@ -139,8 +140,12 @@ void procUserControl(WINDOW* win, struct game* game) {
         game->player.dirX = 2;
     }
     if (keyPressed == KEY_UP) {
-        game->projectiles = spawnProjectile(game->player.posX, bottom - 2, 1, 1);
-        // shoot some shit
+        struct projectile proj;
+        proj.dmg = 1;
+        proj.speed = -2;
+        proj.posY = getmaxy(win) - 4;
+        proj.posX = game->player.posX;
+        spawnProjectile(&game->projectiles, proj);
     }
 
     game->player.posX += game->player.dirX;
