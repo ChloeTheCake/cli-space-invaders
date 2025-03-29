@@ -1,6 +1,8 @@
 #pragma once
 
 #include "game.h"
+#include "projectile.h"
+#include "util.h"
 
 // defines
 

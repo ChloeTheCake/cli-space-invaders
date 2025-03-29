@@ -11,6 +11,7 @@
 #include "../include/projectile.h"
 #include "../include/update.h"
 #include "../include/render.h"
+#include "../include/util.h"
 
 // C doesn't come with true or false out of the box, only 1 or 0, so usually
 // they'd be defined here but curses.h come with those already
@@ -38,8 +39,8 @@ int main() {
     game.player.health = 100;
     game.player.dirX = 0;
     game.player.posX = 0; // center this sometime?????
-    game.projectiles.first = NULL;
-    game.projectiles.last = NULL;
+    game.player.projectiles.first = NULL;
+    game.player.projectiles.last = NULL;
     keypad(game.win, true);
     nodelay(game.win, true);
     curs_set(false);
@@ -56,7 +57,7 @@ int main() {
     
 
 
-    freeAllNodes(&game.projectiles);
+    removeAllNodes(&game.player.projectiles);
     endwin();
     return 0;
 }
@@ -99,7 +100,7 @@ void procUserControl(struct game* game) {
         proj.speed = -2;
         proj.posY = getmaxy(game->win) - 4;
         proj.posX = game->player.posX;
-        spawnProjectile(&game->projectiles, proj);
+        spawnProjectile(&game->player.projectiles, proj);
     }
 
     game->player.posX += game->player.dirX;

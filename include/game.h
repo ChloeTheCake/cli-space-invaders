@@ -5,7 +5,8 @@
 #include <ncurses.h>
 
 // Custom header deps
-#include "projectile.h"
+// #include "projectile.h"
+#include "util.h"
 
 // All the custom stuff
 typedef struct config {
@@ -24,7 +25,7 @@ struct player {
     int health;
     int dirX;
     int posX;
-
+    NodeContainer projectiles;
 };
 
 struct game {
@@ -33,7 +34,7 @@ struct game {
     WINDOW* win;
 
     struct player player;
-    struct nodeContainer projectiles;
+    //struct nodeContainer projectiles;
 
     bool shouldExit;
 };

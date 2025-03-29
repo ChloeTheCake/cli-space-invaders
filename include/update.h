@@ -3,6 +3,8 @@
 #define    MAX_ITERS    216
 
 #include "game.h"
+#include "projectile.h"
+#include "util.h"
 
 // Functions
 void updatePlayerState(struct game* game);

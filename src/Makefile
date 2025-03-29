@@ -7,11 +7,11 @@ LDIR = ../lib
 
 LIBS=-lncurses 
 
-_DEPS = projectile.h game.h update.h render.h
+_DEPS = projectile.h game.h update.h render.h util.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 
-_OBJ = main.o projectile.o update.o render.o
+_OBJ = main.o projectile.o update.o render.o util.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: %.c $(DEPS)
