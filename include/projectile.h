@@ -1,3 +1,11 @@
+#pragma once
+
+// Include deps
+#include <stdlib.h>
+#include <assert.h>
+#include <ncurses.h>
+
+// ALL STRUCTS
 struct projectile {
     int posX;
     int posY;
@@ -15,8 +23,8 @@ struct nodeContainer {
     NODE* last;
 };
 
-
+// ALL FUNCTIONS
 void spawnProjectile(struct nodeContainer* nodeCon, struct projectile proj);
 void addProjectileToList(struct nodeContainer* nodeCon, NODE* node);
-struct projectile* getListIndex(int index);
-/*void removeAtIndex(int index);*/
+void freeAllNodes(struct nodeContainer* nodeCon);
+void removeAtIndex(struct nodeContainer* nodeCon, int index);

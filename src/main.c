@@ -7,7 +7,10 @@
 #include <pthread.h>
 
 // MY OWN HEADERS AHA!!!
-#include "../include/util.h"
+#include "../include/game.h"
+#include "../include/projectile.h"
+#include "../include/update.h"
+#include "../include/render.h"
 
 // C doesn't come with true or false out of the box, only 1 or 0, so usually
 // they'd be defined here but curses.h come with those already
@@ -18,114 +21,65 @@
 #define     DEFAULT_SCR_HEIGHT      25
 
 
-// I define a struct with typedef to give it a custom type...
-typedef struct config {
-    unsigned int scrWidth;
-    unsigned int scrHeight;
-} Config; // ... And name it here
-
-struct proc {
-    pthread_t projectileTid;
-    pthread_t playerTid;
-    pthread_t enemiesTid;
-    /*pthread_t*/
-};
-
-struct player {
-    int health;
-    int dirX;
-    int posX;
-
-};
-
-struct game {
-    struct config config;
-    struct proc proc;
-
-    struct player player;
-    struct nodeContainer projectiles;
-
-    bool shouldExit;
-};
-
 // Function definitions go here so main can be at the top
 Config promptConfig();
-void procUserControl(WINDOW* win, struct game* game);
+void procUserControl(struct game* game);
 void update(struct game* game);
-void render(WINDOW* win, struct game* game);
+void render(struct game* game);
 
 
 // ##################################################################
 int main() {
-    WINDOW* win = initscr();
-    keypad(win, true);
-    nodelay(win, true);
 
+    // Set all the defaults and init everything, probably should pull this into
+    // it's own function at some point...
     struct game game;
+    game.win = initscr();
     game.player.health = 100;
     game.player.dirX = 0;
     game.player.posX = 0; // center this sometime?????
     game.projectiles.first = NULL;
     game.projectiles.last = NULL;
+    keypad(game.win, true);
+    nodelay(game.win, true);
+    curs_set(false);
 
     game.shouldExit = false;
     while(!game.shouldExit) {
-        procUserControl(win, &game); // right now this is rendering changes
-        // game.projectiles = spawnProjectile(1, 1, 1, 1);
+        // Every frame this shall loop
+
+        procUserControl(&game); // right now this is rendering changes
         update(&game);
-        render(win, &game);
-
-        /*modifyValuesOnUserInput*/
-        /*RenderChanges*/
-
-        usleep(10000);
+        render(&game);
+        usleep(50000);
     }
     
 
 
+    freeAllNodes(&game.projectiles);
     endwin();
     return 0;
 }
 
 // ##################################################################
 
-void render(WINDOW* win, struct game* game) {
-    int bottom = getmaxy(win) - 4;
+void render(struct game* game) {
     erase();
-
-    if (game->projectiles.first != NULL && game->projectiles.last != NULL) {
-        NODE* currentNode = game->projectiles.first;
-
-        while(1) {
-            mvaddstr(currentNode->data.posY, currentNode->data.posX, "+");
-            if (currentNode == game->projectiles.last) {
-                break;
-            }
-            currentNode = currentNode->next;
-        }
-    }
-    mvaddstr(bottom, game->player.posX, "_/|\\_");
+    renderPlayer(game);
+    renderProjectiles(game);
 }
 
 void update(struct game* game) {
-    if (game->projectiles.first != NULL && game->projectiles.last != NULL) {
-        NODE* currentNode = game->projectiles.first;
-
-        while(1) {
-            currentNode->data.posY += currentNode->data.speed;
-            if (currentNode == game->projectiles.last) {
-                break;
-            }
-            currentNode = currentNode->next;
-        }
-    }
+    updatePlayerState(game);
+    updateProjectileState(game);
+    removeProjectilesOutOfBounds(game);
 }
 
 
 
-void procUserControl(WINDOW* win, struct game* game) {
-    int keyPressed = wgetch(win);
-    int bottom = getmaxy(win) - 4;
+void procUserControl(struct game* game) {
+    int keyPressed = wgetch(game->win);
+    int bottom = getmaxy(game->win) - 4;
 
     if (keyPressed == 'q') {
         game->shouldExit = true;
@@ -143,7 +97,7 @@ void procUserControl(WINDOW* win, struct game* game) {
         struct projectile proj;
         proj.dmg = 1;
         proj.speed = -2;
-        proj.posY = getmaxy(win) - 4;
+        proj.posY = getmaxy(game->win) - 4;
         proj.posX = game->player.posX;
         spawnProjectile(&game->projectiles, proj);
     }

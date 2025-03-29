@@ -1,5 +1,5 @@
 IDIR = ../include
-CC=gcc
+CC=clang
 cflags= -I$(IDIR)
 
 ODIR = obj
@@ -7,18 +7,18 @@ LDIR = ../lib
 
 LIBS=-lncurses 
 
-_DEPS = util.h
+_DEPS = projectile.h game.h update.h render.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 
-_OBJ = main.o util.o
+_OBJ = main.o projectile.o update.o render.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -g -c -o $@ $< $(CFLAGS)
 
 space_invaders: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -g -o $@ $^ $(CFLAGS) $(LIBS)
 
 .PHONY: clean
 
