@@ -2,11 +2,14 @@
 
 // include deps
 #include <pthread.h>
+#include <stdbool.h>
 #include <ncurses.h>
 
 // Custom header deps
 // #include "projectile.h"
 #include "util.h"
+#include "player.h"
+#include "enemy.h"
 
 // All the custom stuff
 typedef struct config {
@@ -28,12 +31,28 @@ struct player {
     NodeContainer projectiles;
 };
 
+/*enum enemyType {*/
+/*};*/
+
+struct enemy {
+    int posX;
+    int posY;
+    bool alive;
+    /*enum enemyType enemyType;*/
+};
+
+struct hostile {
+    NodeContainer enemies;
+    NodeContainer enemyProjectiles;
+};
+
 struct game {
     struct config config;
     struct proc proc;
     WINDOW* win;
 
     struct player player;
+    struct hostile hostile;
     //struct nodeContainer projectiles;
 
     bool shouldExit;

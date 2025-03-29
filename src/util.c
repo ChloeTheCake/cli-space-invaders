@@ -81,6 +81,8 @@ void removeAllNodes(NodeContainer* nodeCon) {
             if (currentNode->next == NULL) {
                 free(currentNode->data);
                 free(currentNode);
+                nodeCon->first = NULL;
+                nodeCon->last = NULL;
                 return;
             }
             // Otherwise...
@@ -91,5 +93,14 @@ void removeAllNodes(NodeContainer* nodeCon) {
                 free(nodeToFree);
             }
         }
+    }
+}
+
+bool isEven(int num) {
+    if (num % 2 == 0) {
+        return true;
+    }
+    else {
+        return false;
     }
 }

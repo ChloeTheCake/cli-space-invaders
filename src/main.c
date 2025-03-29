@@ -12,6 +12,7 @@
 #include "../include/update.h"
 #include "../include/render.h"
 #include "../include/util.h"
+#include "../include/enemy.h"
 
 // C doesn't come with true or false out of the box, only 1 or 0, so usually
 // they'd be defined here but curses.h come with those already
@@ -41,9 +42,16 @@ int main() {
     game.player.posX = 0; // center this sometime?????
     game.player.projectiles.first = NULL;
     game.player.projectiles.last = NULL;
+    game.hostile.enemies.first = NULL;
+    game.hostile.enemies.last = NULL;
+    game.hostile.enemyProjectiles.first = NULL;
+    game.hostile.enemyProjectiles.last = NULL;
     keypad(game.win, true);
     nodelay(game.win, true);
     curs_set(false);
+
+
+    spawnEnemiesOnNewscreen(&game);
 
     game.shouldExit = false;
     while(!game.shouldExit) {
@@ -67,6 +75,7 @@ int main() {
 void render(struct game* game) {
     erase();
     renderPlayer(game);
+    renderEnemies(game);
     renderProjectiles(game);
 }
 

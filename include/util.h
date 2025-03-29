@@ -19,3 +19,4 @@ typedef struct nodeContainer {
 void addNodeToGenericList(NodeContainer* nodeCon, void* data, int dataSize);
 void removeAtIndex(NodeContainer* nodeCon, int index);
 void removeAllNodes(NodeContainer* nodeCon);
+bool isEven(int num);
