@@ -1,5 +1,5 @@
 IDIR = ../include
-CC=clang
+CC=gcc
 cflags= -I$(IDIR)
 
 ODIR = obj
