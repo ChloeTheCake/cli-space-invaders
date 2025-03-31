@@ -56,23 +56,21 @@ void checkIfProjectilesHitEnemy(struct game* game) {
                 Node* currentProjectileNode = game->player.projectiles.first;
                 // I'm making this into a for loop to track the index
                 // while(1) {
-                for(int i = 0; true; i++) {
+                for(int index = 0; true; index++) {
                     int posDiff = ((struct enemy*)currentEnemyNode->data)->length; // - 1
+                    // posDiff = 1;
 
                     // This just checks across the length of the enemy
-                    for(int index = 0; i < posDiff; index++) {
+                    for(int i = 0; i < posDiff; i++) {
                         if (((struct projectile*)currentProjectileNode->data)->posY
                                 != ((struct enemy*)currentEnemyNode->data)->posY) {
                             continue;
                         }
                         // in this case we hit the enemy
-                        if (((struct projectile*)currentProjectileNode->data)->posX
+                        else if (((struct projectile*)currentProjectileNode->data)->posX
                                 == ((struct enemy*)currentEnemyNode->data)->posX + i) {
                             // removeEnemyFromWindow(index);
                             removeAtIndex(&game->hostile.enemies, index);
-                        }
-                        else {
-                            assert(false);
                         }
                     }
 
