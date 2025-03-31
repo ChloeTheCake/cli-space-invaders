@@ -12,7 +12,9 @@
 #include "../include/update.h"
 #include "../include/render.h"
 #include "../include/util.h"
-#include "../include/enemy.h"
+#include "../include/config.h"
+
+// #include "../include/enemy.h"
 
 // C doesn't come with true or false out of the box, only 1 or 0, so usually
 // they'd be defined here but curses.h come with those already
@@ -21,6 +23,8 @@
 
 #define     DEFAULT_SCR_WIDTH       30
 #define     DEFAULT_SCR_HEIGHT      25
+
+#define     PLAYER_SPEED            2
 
 
 // Function definitions go here so main can be at the top
@@ -37,21 +41,10 @@ int main() {
     // it's own function at some point...
     struct game game;
     game.win = initscr();
-    game.player.health = 100;
-    game.player.dirX = 0;
-    game.player.posX = 0; // center this sometime?????
-    game.player.projectiles.first = NULL;
-    game.player.projectiles.last = NULL;
-    game.hostile.enemies.first = NULL;
-    game.hostile.enemies.last = NULL;
-    game.hostile.enemyProjectiles.first = NULL;
-    game.hostile.enemyProjectiles.last = NULL;
+    createNewGame(&game);
     keypad(game.win, true);
     nodelay(game.win, true);
     curs_set(false);
-
-
-    spawnEnemiesOnNewscreen(&game);
 
     game.shouldExit = false;
     while(!game.shouldExit) {
@@ -82,6 +75,7 @@ void render(struct game* game) {
 void update(struct game* game) {
     updatePlayerState(game);
     updateProjectileState(game);
+    checkIfProjectilesHitEnemy(game);
     removeProjectilesOutOfBounds(game);
 }
 
@@ -89,7 +83,6 @@ void update(struct game* game) {
 
 void procUserControl(struct game* game) {
     int keyPressed = wgetch(game->win);
-    int bottom = getmaxy(game->win) - 4;
 
     if (keyPressed == 'q') {
         game->shouldExit = true;
@@ -98,16 +91,16 @@ void procUserControl(struct game* game) {
         game->player.dirX = 0;
     }
     if (keyPressed == KEY_LEFT) {
-        game->player.dirX = -2;
+        game->player.dirX = -ENTITY_SPEED;
     }
     if (keyPressed == KEY_RIGHT) {
-        game->player.dirX = 2;
+        game->player.dirX = ENTITY_SPEED;
     }
     if (keyPressed == KEY_UP) {
         struct projectile proj;
         proj.dmg = 1;
         proj.speed = -2;
-        proj.posY = getmaxy(game->win) - 4;
+        proj.posY = getmaxy(game->win) - 4; // 4 is an offset so it's not at the very bottom
         proj.posX = game->player.posX;
         spawnProjectile(&game->player.projectiles, proj);
     }

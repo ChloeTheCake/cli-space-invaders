@@ -1,10 +1,5 @@
 #pragma once
 
-#include <stdlib.h>
-#include <assert.h>
-#include <string.h>
-#include <stdbool.h>
-
 typedef struct node {
     struct node* next;
     void* data;

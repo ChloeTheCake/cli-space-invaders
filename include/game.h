@@ -6,10 +6,7 @@
 #include <ncurses.h>
 
 // Custom header deps
-// #include "projectile.h"
-#include "util.h"
-#include "player.h"
-#include "enemy.h"
+#include "entities.h"
 
 // All the custom stuff
 typedef struct config {
@@ -24,36 +21,27 @@ struct proc {
     /*pthread_t*/
 };
 
-struct player {
-    int health;
-    int dirX;
-    int posX;
-    NodeContainer projectiles;
-};
-
-/*enum enemyType {*/
-/*};*/
-
-struct enemy {
-    int posX;
-    int posY;
-    bool alive;
-    /*enum enemyType enemyType;*/
-};
-
-struct hostile {
-    NodeContainer enemies;
-    NodeContainer enemyProjectiles;
-};
 
 struct game {
     struct config config;
     struct proc proc;
     WINDOW* win;
 
+    int level;
     struct player player;
     struct hostile hostile;
     //struct nodeContainer projectiles;
 
     bool shouldExit;
 };
+
+// Fuctions
+
+void createNewGame(struct game* game);
+
+
+
+
+
+
+

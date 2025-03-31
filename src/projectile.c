@@ -1,7 +1,7 @@
 #include "../include/projectile.h"
 
 void spawnProjectile(NodeContainer* nodeCon, struct projectile proj) {
-    Node* node = (Node*)malloc(sizeof(Node));
+    //Node* node = (Node*)malloc(sizeof(Node));
     addNodeToGenericList(nodeCon, &proj, sizeof(proj));
 
 

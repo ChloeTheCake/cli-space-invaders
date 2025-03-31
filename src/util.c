@@ -1,3 +1,8 @@
+#include <stdlib.h>
+#include <assert.h>
+#include <string.h>
+#include <stdbool.h>
+
 #include "../include/util.h"
 
 void addNodeToGenericList(NodeContainer* nodeCon, void* data, int dataSize) {
