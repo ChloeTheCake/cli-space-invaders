@@ -1,8 +1,7 @@
 #include "../include/render.h"
 
 void renderPlayer(struct game* game) {
-    int bottom = getmaxy(game->win) - 4;
-    mvaddstr(bottom, game->player.posX, "_/|\\_");
+    mvaddstr(game->player.posY, game->player.posX, "_/|\\_");
 }
 
 void renderEnemies(struct game* game) {
@@ -27,7 +26,7 @@ void renderProjectiles(struct game* game) {
         Node* currentNode = game->player.projectiles.first;
 
         while(1) {
-            mvaddstr(((struct projectile*)currentNode->data)->posY, ((struct projectile*)currentNode->data)->posX + 2, "+");
+            mvaddstr(((struct projectile*)currentNode->data)->posY, ((struct projectile*)currentNode->data)->posX, "+");
             if (currentNode == game->player.projectiles.last) {
                 break;
             }

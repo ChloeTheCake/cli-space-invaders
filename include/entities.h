@@ -4,6 +4,7 @@ struct player {
     int health;
     int dirX;
     int posX;
+    int posY;
     NodeContainer projectiles;
 };
 

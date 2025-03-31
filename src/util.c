@@ -46,13 +46,19 @@ void removeAtIndex(NodeContainer* nodeCon, int index) {
         if (currentNode != nodeCon->first && currentNode->next != nodeCon->last) {
             Node* nodeToFree = currentNode->next;
             currentNode->next = currentNode->next->next;
+            nodeToFree->next = NULL;
             free(nodeToFree->data);
+            nodeToFree->data = NULL;
             free(nodeToFree);
+            nodeToFree = NULL;
         }
         // Free if it's the ONLY node in the list
         else if (currentNode == nodeCon->first && currentNode == nodeCon->last) {
             free(currentNode->data);
+            currentNode->data = NULL;
+            currentNode->next = NULL;
             free(currentNode);
+            currentNode = NULL;
             nodeCon->first = NULL;
             nodeCon->last = NULL;
         }
@@ -60,13 +66,19 @@ void removeAtIndex(NodeContainer* nodeCon, int index) {
         else if (currentNode == nodeCon->first && currentNode != nodeCon->last) {
             nodeCon->first = currentNode->next;
             free(currentNode->data);
+            currentNode->data = NULL;
+            currentNode->next = NULL;
             free(currentNode);
+            currentNode = NULL;
         }
         // Free if it's the last node in the list
         else if (currentNode->next == nodeCon->last) {
             Node* nodeToFree = currentNode->next;
             free(nodeToFree->data);
+            nodeToFree->data = NULL;
+            nodeToFree->next = NULL;
             free(nodeToFree);
+            nodeToFree = NULL;
             currentNode->next = NULL;
             nodeCon->last = currentNode;
         }

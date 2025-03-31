@@ -53,7 +53,7 @@ int main() {
         procUserControl(&game); // right now this is rendering changes
         update(&game);
         render(&game);
-        usleep(50000);
+        usleep(20000);
     }
     
 
@@ -99,9 +99,9 @@ void procUserControl(struct game* game) {
     if (keyPressed == KEY_UP) {
         struct projectile proj;
         proj.dmg = 1;
-        proj.speed = -2;
+        proj.speed = -PROJECTILE_SPEED;
         proj.posY = getmaxy(game->win) - 4; // 4 is an offset so it's not at the very bottom
-        proj.posX = game->player.posX;
+        proj.posX = game->player.posX + SPACE_TO_PLAYER_CENTER;
         spawnProjectile(&game->player.projectiles, proj);
     }
 

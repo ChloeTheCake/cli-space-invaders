@@ -47,46 +47,136 @@ void checkIfProjectilesHitEnemy(struct game* game) {
     // of one xy value... AND a length, which is used in these instances to basically check over
     // the whole length of the enemies xy it ACTUALLY occupies
 
-    // First we start iterating over all the enemies...
-    if (game->hostile.enemies.first != NULL && game->hostile.enemies.last != NULL) {
-        Node* currentEnemyNode = game->hostile.enemies.first;
-        while(1) {
-            // ...And for each enemy we iterate over all the projectiles, checking their position
-            if (game->player.projectiles.first != NULL && game->player.projectiles.last != NULL) {
-                Node* currentProjectileNode = game->player.projectiles.first;
-                // I'm making this into a for loop to track the index
-                // while(1) {
-                for(int index = 0; true; index++) {
-                    int posDiff = ((struct enemy*)currentEnemyNode->data)->length; // - 1
-                    // posDiff = 1;
 
-                    // This just checks across the length of the enemy
-                    for(int i = 0; i < posDiff; i++) {
-                        if (((struct projectile*)currentProjectileNode->data)->posY
-                                != ((struct enemy*)currentEnemyNode->data)->posY) {
-                            continue;
-                        }
-                        // in this case we hit the enemy
-                        else if (((struct projectile*)currentProjectileNode->data)->posX
-                                == ((struct enemy*)currentEnemyNode->data)->posX + i) {
-                            // removeEnemyFromWindow(index);
-                            removeAtIndex(&game->hostile.enemies, index);
+    // start iterating over projectiles
+    if (game->player.projectiles.first != NULL && game->player.projectiles.last != NULL) {
+        Node* currentProjectileNode = game->player.projectiles.first;
+        for(int projectileIndex = 0; true; projectileIndex++) {
+
+            // start iterating over enemies per projectile
+            if (game->hostile.enemies.first != NULL && game->hostile.enemies.last != NULL) {
+                Node* currentEnemyNode = game->hostile.enemies.first;
+                for(int enemyIndex = 0; true; enemyIndex++) {
+
+                    // a for loop might need to be added here to check the length
+                    // of an enemy if they're multiple long
+
+                    //check if projectile and enemy occupy the same Y
+                    if (((struct projectile*)currentProjectileNode->data)->posY
+                            == ((struct enemy*)currentEnemyNode->data)->posY) {
+                        // inside the if (multi-line if ew)
+                        // Check if the X is the same now
+                        if (((struct projectile*)currentProjectileNode->data)->posX
+                                == ((struct enemy*)currentEnemyNode->data)->posX) {
+                            // inside the second if (multi-line if ew)
+                            // Set next BEFORE removing them
+
+                            if (currentProjectileNode == game->player.projectiles.last) {
+                                // tuhoansetuh
+                                removeAtIndex(&game->hostile.enemies, enemyIndex);
+                                removeAtIndex(&game->player.projectiles, projectileIndex);
+                                return;
+                            }
+                            else if (currentEnemyNode == game->hostile.enemies.last) {
+                                if (currentEnemyNode->next == NULL) {
+                                    currentEnemyNode = game->hostile.enemies.first;
+                                }
+                                else {
+                                    currentEnemyNode = currentEnemyNode->next;
+                                }
+                                currentProjectileNode = currentProjectileNode->next;
+
+                                removeAtIndex(&game->hostile.enemies, enemyIndex);
+                                removeAtIndex(&game->player.projectiles, projectileIndex);
+
+                                continue;
+
+                            }
+                            else if (currentProjectileNode != game->player.projectiles.last 
+                                    && currentEnemyNode != game->hostile.enemies.last) {
+                                currentEnemyNode = currentEnemyNode->next;
+                                currentProjectileNode = currentProjectileNode->next;
+
+                                removeAtIndex(&game->hostile.enemies, enemyIndex);
+                                removeAtIndex(&game->player.projectiles, projectileIndex);
+                                continue;
+                            }
+                            else {
+                                assert(false);
+                            }
                         }
                     }
-
-                    // Break from iterating over projectiles
-                    if (currentProjectileNode == game->player.projectiles.last) {
+                    if (currentEnemyNode == game->hostile.enemies.last) {
                         break;
                     }
-                    currentProjectileNode = currentProjectileNode->next;
+                    else if (currentEnemyNode->next != NULL) {
+                        currentEnemyNode = currentEnemyNode->next;
+                    }
+                    else {
+                        assert(false);
+                    }
                 }
             }
-
-            // Break from iterating over all enemies
-            if (currentEnemyNode == game->hostile.enemies.last) {
+            if (currentProjectileNode == game->player.projectiles.last) {
                 break;
             }
-            currentEnemyNode = currentEnemyNode->next;
+            else if (currentProjectileNode->next != NULL) {
+                currentProjectileNode = currentProjectileNode->next;
+            }
+            else {
+                assert(false);
+            }
         }
     }
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    // // First we start iterating over all the enemies...
+    // if (game->hostile.enemies.first != NULL && game->hostile.enemies.last != NULL) {
+    //     Node* currentEnemyNode = game->hostile.enemies.first;
+    //     // while(1) {
+    //     for(int enemyIndex = 0; true; enemyIndex++) {
+    //         // ...And for each enemy we iterate over all the projectiles, checking their position
+    //         if (game->player.projectiles.first != NULL && game->player.projectiles.last != NULL) {
+    //             Node* currentProjectileNode = game->player.projectiles.first;
+    //             // I'm making this into a for loop to track the index
+    //             // while(1) {
+    //             for(int projectileIndex = 0; true; projectileIndex++) {
+    //                 int positionDiff = ((struct enemy*)currentEnemyNode->data)->length; // - 1 !!!!BUG!!!!
+    //                 // int positionDiff = 1;
+    //
+    //                 // This just checks across the length of the enemy
+    //                 for(int i = 0; i < positionDiff; i++) {
+    //                     if (((struct projectile*)currentProjectileNode->data)->posY
+    //                             != ((struct enemy*)currentEnemyNode->data)->posY) {
+    //                         continue;
+    //                     }
+    //                     // in this case we hit the enemy
+    //                     else if (((struct projectile*)currentProjectileNode->data)->posX
+    //                             == ((struct enemy*)currentEnemyNode->data)->posX + i) {
+    //                         // removeEnemyFromWindow(index);
+    //                         removeAtIndex(&game->hostile.enemies, enemyIndex);
+    //                     }
+    //                 }
+    //
+    //                 // Break from iterating over projectiles
+    //                 if (currentProjectileNode == game->player.projectiles.last) {
+    //                     break;
+    //                 }
+    //                 currentProjectileNode = currentProjectileNode->next;
+    //             }
+    //         }
+    //
+    //         // Break from iterating over all enemies
+    //         if (currentEnemyNode == game->hostile.enemies.last) {
+    //             break;
+    //         }
+    //         currentEnemyNode = currentEnemyNode->next;
+    //     }
+    // }
 }
