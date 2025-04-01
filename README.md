@@ -6,6 +6,7 @@
 - ~~Fix a bug where it gets stuck in a loop in the function checkIfProjectilesHitEnemy~~
 - ~~Fix a bug where enemies not hit by projectiles die~~
 - ~~Fix a bug where it segment faults and I'm not sure why (I know why now)~~
+- Refactor the checkIfProjectilesHitEnemy function in update.c to nest less
 - Make the enemies move
 - Add barriers
 - Make the enemies shoot
