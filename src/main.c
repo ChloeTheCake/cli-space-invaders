@@ -8,7 +8,6 @@
 
 // MY OWN HEADERS AHA!!!
 #include "../include/game.h"
-#include "../include/projectile.h"
 #include "../include/update.h"
 #include "../include/render.h"
 #include "../include/util.h"

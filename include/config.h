@@ -16,3 +16,4 @@
 #define         ENEMY_PADDING               3
 #define         ENEMY_OCCUPIES_WIDTH        ENEMY_WIDTH * ENEMY_HEIGHT
 
+#define         TOTAL_BARRIERS              3

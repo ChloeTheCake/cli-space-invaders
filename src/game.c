@@ -2,8 +2,9 @@
 #include <stdbool.h>
 #include <ncurses.h>
 
+// #include "../include/entities.h"
+struct game;
 #include "../include/game.h"
-#include "../include/enemy.h"
 
 // Custom header deps
 

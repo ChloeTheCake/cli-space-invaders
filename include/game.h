@@ -2,10 +2,10 @@
 
 // include deps
 #include <pthread.h>
-#include <stdbool.h>
 #include <ncurses.h>
 
 // Custom header deps
+#include "config.h"
 #include "entities.h"
 
 // All the custom stuff
@@ -27,9 +27,11 @@ struct game {
     struct proc proc;
     WINDOW* win;
 
-    int level;
     struct player player;
     struct hostile hostile;
+    struct barrier barries[TOTAL_BARRIERS];
+
+    int level;
     //struct nodeContainer projectiles;
 
     bool shouldExit;

@@ -1,4 +1,14 @@
+#pragma once
+
+struct game;
 #include "util.h"
+
+struct projectile {
+    int posX;
+    int posY;
+    int dmg;
+    int speed;
+};
 
 struct player {
     int health;
@@ -7,9 +17,6 @@ struct player {
     int posY;
     NodeContainer projectiles;
 };
-
-/*enum enemyType {*/
-/*};*/
 
 struct enemy {
     int posX;
@@ -23,3 +30,14 @@ struct hostile {
     NodeContainer enemies;
     NodeContainer enemyProjectiles;
 };
+
+// Here be the barriers, I figured they're entities too
+
+struct barrier {
+    int health; // max of 4?
+    int posX;
+    int posY;
+};
+
+void spawnProjectile(NodeContainer* nodeCon, struct projectile proj);
+void spawnEnemiesOnNewscreen(struct game* game);
