@@ -23,7 +23,7 @@
 #define     DEFAULT_SCR_WIDTH       30
 #define     DEFAULT_SCR_HEIGHT      25
 
-#define     PLAYER_SPEED            2
+#define     PLAYER_SPEED            1
 
 
 // Function definitions go here so main can be at the top
@@ -67,6 +67,7 @@ int main() {
 void render(struct game* game) {
     erase();
     renderPlayer(game);
+    renderBarriers(game);
     renderEnemies(game);
     renderProjectiles(game);
 }
@@ -90,10 +91,10 @@ void procUserControl(struct game* game) {
         game->player.dirX = 0;
     }
     if (keyPressed == KEY_LEFT) {
-        game->player.dirX = -ENTITY_SPEED;
+        game->player.dirX = -PLAYER_SPEED;
     }
     if (keyPressed == KEY_RIGHT) {
-        game->player.dirX = ENTITY_SPEED;
+        game->player.dirX = PLAYER_SPEED;
     }
     if (keyPressed == KEY_UP) {
         struct projectile proj;

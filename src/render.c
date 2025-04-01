@@ -34,3 +34,11 @@ void renderProjectiles(struct game* game) {
         }
     }
 }
+
+void renderBarriers(struct game* game) {
+    for(int i = 0; i < TOTAL_BARRIERS; i++) {
+        for(int j = 0; j < game->barriers[i].health; j++) {
+            mvaddstr(game->barriers[i].posY + j, game->barriers[i].posX, "#####");
+        }
+    }
+}

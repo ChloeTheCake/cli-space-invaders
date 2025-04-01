@@ -19,6 +19,20 @@ void createNewGame(struct game* game) {
     game->hostile.enemies.last = NULL;
     game->hostile.enemyProjectiles.first = NULL;
     game->hostile.enemyProjectiles.last = NULL;
+    createBarriers(game);
 
     spawnEnemiesOnNewscreen(game);
+}
+
+void createBarriers(struct game* game) {
+    for(int i = 0; i < TOTAL_BARRIERS; i++) {
+        int winWidth = getmaxx(game->win);
+        int barrierOccupyWidth = winWidth * 0.5; // BARRIER_OCCUPIES_WINPERCENT;
+        int leftPadding = (winWidth - barrierOccupyWidth) / 2;
+
+
+        game->barriers[i].posX = leftPadding + ((barrierOccupyWidth / TOTAL_BARRIERS) * i);
+        game->barriers[i].posY = getmaxy(game->win) - 10;
+        game->barriers[i].health = 4;
+    }
 }
