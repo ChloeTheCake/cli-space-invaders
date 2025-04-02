@@ -20,12 +20,6 @@
 /*#define     false                   0*/
 /*#define     true                    1*/
 
-#define     DEFAULT_SCR_WIDTH       30
-#define     DEFAULT_SCR_HEIGHT      25
-
-#define     PLAYER_SPEED            1
-
-
 // Function definitions go here so main can be at the top
 Config promptConfig();
 void procUserControl(struct game* game);
@@ -52,7 +46,8 @@ int main() {
         procUserControl(&game); // right now this is rendering changes
         update(&game);
         render(&game);
-        usleep(20000);
+        // usleep(20000);
+        usleep(60000);
     }
     
 
@@ -75,6 +70,7 @@ void render(struct game* game) {
 void update(struct game* game) {
     updatePlayerState(game);
     updateProjectileState(game);
+    checkIfPlayerProjectileHitBarrier(game);
     checkIfProjectilesHitEnemy(game);
     removeProjectilesOutOfBounds(game);
 }
@@ -106,71 +102,5 @@ void procUserControl(struct game* game) {
     }
 
     game->player.posX += game->player.dirX;
-}
-
-void playerShootsProjectile() {
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-// This function just promts the user for config options
-Config promptConfig() {
-    // create two variables, a Config (struct config), and an
-    // array of chars (literally just a byte) to store input into
-    Config conf;
-    char buff[16];
-
-    // Prompt user input then try to get it from stdin, store into buff, and only read stdin to
-    // the size of buff. I then check for NULL in case the read fails and force the program to
-    // abort with assert if that is the case
-    printf("What would you like your screen width to be in characters?\n(DEFAULT for defaults)\n=> ");
-    if (fgets(buff, sizeof(buff), stdin) == NULL) {
-        printf("Couldn't read input");
-        assert(false);
-    }
-
-    // atoi turn a string (char array) into number or 0 if it cannot do so
-    // so if it fails I check for 'DEFAULT' and if that's not the same assert
-    unsigned int width = atoi(buff);
-    if (width <= 0) {
-        if (strncmp(buff, "DEFAULT", 7) == 0) {
-            width = DEFAULT_SCR_WIDTH;
-        }
-        printf("Invalid input, use only numbers or 'DEFAULT'... Read: %d", width);
-        assert(false);
-    }
-
-    printf("What would you like your screen height to be in characters?\n(DEFAULT for defaults)\n=> ");
-    if (fgets(buff, sizeof(buff), stdin) == NULL) {
-        printf("Couldn't read input");
-        assert(false);
-    }
-
-    unsigned int height = atoi(buff);
-    if (height <= 0) {
-        if (strncmp(buff, "DEFAULT", 7) == 0) {
-            height = DEFAULT_SCR_HEIGHT;
-        }
-        printf("Invalid input, use only numbers or 'DEFAULT'... Read: %d", height);
-        assert(false);
-    }
-
-    // Set the values
-    conf.scrWidth = width;
-    conf.scrHeight = height;
-
-    // Return config
-    return conf;
 }
 

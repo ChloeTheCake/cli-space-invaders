@@ -10,4 +10,5 @@ void updateProjectileState(struct game* game);
 void removeProjectilesOutOfBounds(struct game* game);
 
 void checkIfProjectilesHitEnemy(struct game* game);
+void checkIfPlayerProjectileHitBarrier(struct game* game);
 //void removeEnemyFromWindow();

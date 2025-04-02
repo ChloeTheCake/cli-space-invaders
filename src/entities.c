@@ -41,4 +41,18 @@ void spawnEnemiesOnNewscreen(struct game* game) {
     }
 }
 
+void createBarriers(struct game* game) {
+    for(int i = 0; i < TOTAL_BARRIERS; i++) {
+        int winWidth = getmaxx(game->win);
+        int barrierOccupyWidth = winWidth * BARRIER_OCCUPIES_WINPERCENT;
+        int leftPadding = (winWidth - barrierOccupyWidth) / 2;
+        int barrierPadding = (barrierOccupyWidth / (TOTAL_BARRIERS - 1)) - 2;
+        // the - 2 is to get to the middle of the barrier which has a width of 4
+        // the -1 is because there are X barriers but X-1 spaces between
+
+        game->barriers[i].posX = leftPadding + (barrierPadding * i);
+        game->barriers[i].posY = getmaxy(game->win) - BARRIER_RAISED_BY;
+        game->barriers[i].health = BARRIER_MAX_HEALTH;
+    }
+}
 

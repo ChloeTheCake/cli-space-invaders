@@ -10,12 +10,18 @@
 #define         SPACE_TO_PLAYER_CENTER              2
 #define         PROJECTILE_SPEED                    1
 
-// Enemy specific config options
+// Entity config, so player, enemies, and barriers
+// Enemies
 #define         ENEMY_WIDTH                         11
 #define         ENEMY_HEIGHT                        5
 #define         ENEMY_PADDING                       3
 #define         ENEMY_OCCUPIES_WIDTH                ENEMY_WIDTH * ENEMY_HEIGHT
 // #define         ENEMY_OCCUPIES_WINPERCENT
-
+// Player
+#define         PLAYER_SPEED                        1
+// Barriers
 #define         TOTAL_BARRIERS                      3
+#define         BARRIER_MAX_HEALTH                  4
+#define         BARRIER_WIDTH                       4
+#define         BARRIER_RAISED_BY                   10
 #define         BARRIER_OCCUPIES_WINPERCENT         0.5
