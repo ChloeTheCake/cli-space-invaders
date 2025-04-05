@@ -29,7 +29,7 @@ struct game {
 
     struct player player;
     struct hostile hostile;
-    struct barrier barries[TOTAL_BARRIERS];
+    struct barrier barriers[TOTAL_BARRIERS];
 
     int level;
     //struct nodeContainer projectiles;
@@ -40,6 +40,7 @@ struct game {
 // Fuctions
 
 void createNewGame(struct game* game);
+void createBarriers(struct game* game);
 
 
 

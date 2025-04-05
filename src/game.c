@@ -19,6 +19,9 @@ void createNewGame(struct game* game) {
     game->hostile.enemies.last = NULL;
     game->hostile.enemyProjectiles.first = NULL;
     game->hostile.enemyProjectiles.last = NULL;
+    createBarriers(game);
 
     spawnEnemiesOnNewscreen(game);
+    createBarriers(game);
 }
+

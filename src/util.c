@@ -35,6 +35,10 @@ void removeAtIndex(NodeContainer* nodeCon, int index) {
     if (nodeCon->first != NULL && nodeCon->last != NULL) {
         Node* currentNode = nodeCon->first;
 
+        // Minus one seems strange buts it's because to relink we have to start
+        // at the node before, link it to the one after, then delete the one we
+        // want to. If we went straight to the node we want to remove there is
+        // no reference to the one behind it to relink it
         for(int i = 0; i < index - 1; i++) {
             if (currentNode->next == NULL) {
                 assert(false);
@@ -43,7 +47,8 @@ void removeAtIndex(NodeContainer* nodeCon, int index) {
         }
 
         // Free if it's in the middle of the list
-        if (currentNode != nodeCon->first && currentNode->next != nodeCon->last) {
+        // if (currentNode == nodeCon->first && currentNode->next != nodeCon->last && index != 0) {
+        if (currentNode->next != nodeCon->last && index != 0) {
             Node* nodeToFree = currentNode->next;
             currentNode->next = currentNode->next->next;
             nodeToFree->next = NULL;
@@ -63,7 +68,7 @@ void removeAtIndex(NodeContainer* nodeCon, int index) {
             nodeCon->last = NULL;
         }
         // Free if it's the first node in the list
-        else if (currentNode == nodeCon->first && currentNode != nodeCon->last) {
+        else if (currentNode == nodeCon->first && currentNode != nodeCon->last && index == 0) {
             nodeCon->first = currentNode->next;
             free(currentNode->data);
             currentNode->data = NULL;

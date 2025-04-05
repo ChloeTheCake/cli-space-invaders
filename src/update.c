@@ -137,3 +137,91 @@ void checkIfProjectilesHitEnemy(struct game* game) {
     }
 }
 
+// Lets make this a better version of the one above JFC
+void checkIfPlayerProjectileHitBarrier(struct game* game) {
+    int index = 0;
+    if (game->player.projectiles.first == NULL || game->player.projectiles.last == NULL) {
+        return;
+    }
+
+    // Iterate over all barriers
+    for(int i = 0; i < TOTAL_BARRIERS; i++) {
+        // Continue if the barrier is dead
+        if (game->barriers[i].health == 0) {
+            continue;
+        }
+        index = 0;
+        Node *currentNode = game->player.projectiles.first;
+        // Iterate over all projectiles
+        for(; currentNode != NULL;) {
+
+            if (((struct projectile*)currentNode->data)->posY != game->barriers[i].posY) {
+                currentNode = currentNode->next;
+                index++;
+                continue;
+            }
+            if (((struct projectile*)currentNode->data)->posX < game->barriers[i].posX
+                    || ((struct projectile*)currentNode->data)->posX > game->barriers[i].posX + BARRIER_WIDTH) {
+                currentNode = currentNode->next;
+                index++;
+                continue;
+            }
+            currentNode = currentNode->next;
+            removeAtIndex(&game->player.projectiles, index);
+        }
+    }
+
+
+
+
+
+
+
+
+
+    // NEW
+    // if (game->player.projectiles.first == NULL || game->player.projectiles.last == NULL) {
+    //     return;
+    // }
+    //
+    //
+    //
+    // // Loop over all barriers
+    // for(int i = 0; i < TOTAL_BARRIERS; i++) {
+    //     if (game->player.projectiles.first == NULL || game->player.projectiles.last == NULL) {
+    //         return;
+    //     }
+    //     Node* currentNode = game->player.projectiles.first;
+    //     // for loop for index tracking
+    //     for(int index = 0; true; index++) {
+    //         // continue early if projectile posX isn't within the barrier X bounds... per barrier
+    //         if (((struct projectile*)currentNode->data)->posX < game->barriers[i].posX
+    //                 || ((struct projectile*)currentNode->data)->posX > game->barriers[i].posX + BARRIER_WIDTH) {
+    //             if (currentNode == game->player.projectiles.last) {
+    //                 break;
+    //             }
+    //             currentNode = currentNode->next;
+    //             continue;
+    //         }
+    //         if (((struct projectile*)currentNode->data)->posY != game->barriers[i].posY) {
+    //             if (currentNode == game->player.projectiles.last) {
+    //                 break;
+    //             }
+    //             currentNode = currentNode->next;
+    //             continue;
+    //         }
+    //         // At this point the projectile occupies the same space as a barrier does... At least in theory
+    //         if (currentNode == game->player.projectiles.last) {
+    //             removeAtIndex(&game->player.projectiles, index);
+    //             break;
+    //         }
+    //         else {
+    //             currentNode = currentNode->next;
+    //             removeAtIndex(&game->player.projectiles, index);
+    //             // index--;
+    //             continue;
+    //         }
+    //     }
+    // }
+}
+
