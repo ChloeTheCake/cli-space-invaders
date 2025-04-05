@@ -31,7 +31,7 @@ void addNodeToGenericList(NodeContainer* nodeCon, void* data, int dataSize) {
     }
 }
 
-void removeAtIndex(NodeContainer* nodeCon, int index) {
+Node* removeAtIndex(NodeContainer* nodeCon, int index) {
     if (nodeCon->first != NULL && nodeCon->last != NULL) {
         Node* currentNode = nodeCon->first;
 
@@ -47,15 +47,16 @@ void removeAtIndex(NodeContainer* nodeCon, int index) {
         }
 
         // Free if it's in the middle of the list
-        // if (currentNode == nodeCon->first && currentNode->next != nodeCon->last && index != 0) {
         if (currentNode->next != nodeCon->last && index != 0) {
             Node* nodeToFree = currentNode->next;
+            Node* nodeToReturn = nodeToFree->next;
             currentNode->next = currentNode->next->next;
             nodeToFree->next = NULL;
             free(nodeToFree->data);
             nodeToFree->data = NULL;
             free(nodeToFree);
             nodeToFree = NULL;
+            return nodeToReturn;
         }
         // Free if it's the ONLY node in the list
         else if (currentNode == nodeCon->first && currentNode == nodeCon->last) {
@@ -66,15 +67,18 @@ void removeAtIndex(NodeContainer* nodeCon, int index) {
             currentNode = NULL;
             nodeCon->first = NULL;
             nodeCon->last = NULL;
+            return NULL;
         }
         // Free if it's the first node in the list
         else if (currentNode == nodeCon->first && currentNode != nodeCon->last && index == 0) {
             nodeCon->first = currentNode->next;
+            Node* nodeToReturn = currentNode->next;
             free(currentNode->data);
             currentNode->data = NULL;
             currentNode->next = NULL;
             free(currentNode);
             currentNode = NULL;
+            return nodeToReturn;
         }
         // Free if it's the last node in the list
         else if (currentNode->next == nodeCon->last) {
@@ -86,6 +90,7 @@ void removeAtIndex(NodeContainer* nodeCon, int index) {
             nodeToFree = NULL;
             currentNode->next = NULL;
             nodeCon->last = currentNode;
+            return NULL;
         }
         // Otherwise something has gone very wrong
         else {

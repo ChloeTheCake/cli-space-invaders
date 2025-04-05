@@ -71,7 +71,7 @@ void update(struct game* game) {
     updatePlayerState(game);
     updateProjectileState(game);
     checkIfPlayerProjectileHitBarrier(game);
-    // checkIfProjectilesHitEnemy(game);
+    checkIfProjectilesHitEnemy(game);
     removeProjectilesOutOfBounds(game);
 }
 
