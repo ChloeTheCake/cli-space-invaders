@@ -1,126 +1,109 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <assert.h>
 #include <string.h>
 #include <stdbool.h>
 
 #include "../include/util.h"
 
-void addNodeToGenericList(NodeContainer* nodeCon, void* data, int dataSize) {
-    if (nodeCon->first == NULL && nodeCon->last == NULL) {
-        Node* newNode = (Node*)malloc(sizeof(Node));
-        newNode->next = NULL;
+DynamicArray initDynamicArray(int typeSize) {
+    DynamicArray dynArr;
 
-        newNode->data = malloc(dataSize);
-        memcpy(newNode->data, data, dataSize);
+    dynArr.capacity = 0;
+    dynArr.size = 0;
+    dynArr.memberSize = typeSize;
+    dynArr.tag = ARR_OK;
+    dynArr.contents.data = NULL;
 
-        nodeCon->first = newNode;
-        nodeCon->last = newNode;
-    }
-    else if (nodeCon->first != NULL && nodeCon->last != NULL) {
-        Node* newNode = (Node*)malloc(sizeof(Node));
-        newNode->next = NULL;
 
-        newNode->data = malloc(dataSize);
-        memcpy(newNode->data, data, dataSize);
-
-        nodeCon->last->next = newNode;
-        nodeCon->last = newNode;
-    }
-    else {
-        assert(false);
-    }
+    return dynArr;
 }
 
-Node* removeAtIndex(NodeContainer* nodeCon, int index) {
-    if (nodeCon->first != NULL && nodeCon->last != NULL) {
-        Node* currentNode = nodeCon->first;
-
-        // Minus one seems strange buts it's because to relink we have to start
-        // at the node before, link it to the one after, then delete the one we
-        // want to. If we went straight to the node we want to remove there is
-        // no reference to the one behind it to relink it
-        for(int i = 0; i < index - 1; i++) {
-            if (currentNode->next == NULL) {
+void pushToDynArray(DynamicArray* dynArray, void* data) {
+    switch (dynArray->tag) {
+        case ARR_OK:
+            if (dynArray->size > dynArray->capacity) {
                 assert(false);
             }
-            currentNode = currentNode->next;
-        }
+            if (dynArray->size == dynArray->capacity) {
+                augmentDynamicArray(dynArray);
+            }
+            if (dynArray->tag == ARR_ERROR) {
+                fprintf(stderr, "ERROR IN DYNAMIC ARRAY: %s", dynArray->contents.error);
+                assert(false);
+            }
+            memcpy((char*)dynArray->contents.data + (dynArray->memberSize * dynArray->size), data, dynArray->memberSize);
+            dynArray->size += 1;
+            return;
 
-        // Free if it's in the middle of the list
-        if (currentNode->next != nodeCon->last && index != 0) {
-            Node* nodeToFree = currentNode->next;
-            Node* nodeToReturn = nodeToFree->next;
-            currentNode->next = currentNode->next->next;
-            nodeToFree->next = NULL;
-            free(nodeToFree->data);
-            nodeToFree->data = NULL;
-            free(nodeToFree);
-            nodeToFree = NULL;
-            return nodeToReturn;
-        }
-        // Free if it's the ONLY node in the list
-        else if (currentNode == nodeCon->first && currentNode == nodeCon->last) {
-            free(currentNode->data);
-            currentNode->data = NULL;
-            currentNode->next = NULL;
-            free(currentNode);
-            currentNode = NULL;
-            nodeCon->first = NULL;
-            nodeCon->last = NULL;
-            return NULL;
-        }
-        // Free if it's the first node in the list
-        else if (currentNode == nodeCon->first && currentNode != nodeCon->last && index == 0) {
-            nodeCon->first = currentNode->next;
-            Node* nodeToReturn = currentNode->next;
-            free(currentNode->data);
-            currentNode->data = NULL;
-            currentNode->next = NULL;
-            free(currentNode);
-            currentNode = NULL;
-            return nodeToReturn;
-        }
-        // Free if it's the last node in the list
-        else if (currentNode->next == nodeCon->last) {
-            Node* nodeToFree = currentNode->next;
-            free(nodeToFree->data);
-            nodeToFree->data = NULL;
-            nodeToFree->next = NULL;
-            free(nodeToFree);
-            nodeToFree = NULL;
-            currentNode->next = NULL;
-            nodeCon->last = currentNode;
-            return NULL;
-        }
-        // Otherwise something has gone very wrong
-        else {
+        case ARR_ERROR:
+            fprintf(stderr, "ERROR IN DYNAMIC ARRAY: %s\n", dynArray->contents.error);
             assert(false);
-        }
     }
 }
 
-void removeAllNodes(NodeContainer* nodeCon) {
-    if (nodeCon->first != NULL && nodeCon->last != NULL) {
-        Node* currentNode = nodeCon->first;
+void augmentDynamicArray(DynamicArray* dynArray) {
+    int growthFactor = 2;
 
-        while(1) {
-            // Should be last node
-            if (currentNode->next == NULL) {
-                free(currentNode->data);
-                free(currentNode);
-                nodeCon->first = NULL;
-                nodeCon->last = NULL;
+    switch (dynArray->tag) {
+        case ARR_OK:
+            if (dynArray->capacity == 0) {
+                dynArray->contents.data = malloc(dynArray->memberSize);
+                if (dynArray->contents.data == NULL) {
+                    dynArray->tag = ARR_ERROR;
+                    strncpy(dynArray->contents.error, "Unable to create first element of dynamic array", sizeof(dynArray->contents.error) - 1);
+                }
+                dynArray->capacity = 1;
                 return;
             }
-            // Otherwise...
-            else {
-                Node* nodeToFree = currentNode;
-                currentNode = currentNode->next;
-                free(nodeToFree->data);
-                free(nodeToFree);
+
+            dynArray->contents.data = realloc(dynArray->contents.data, dynArray->memberSize * (dynArray->capacity * growthFactor));
+            if (dynArray->contents.data == NULL) {
+                dynArray->tag = ARR_ERROR;
+                strncpy(dynArray->contents.error, "Unable to resize dynamic array", sizeof(dynArray->contents.error) - 1);
             }
-        }
+            else {
+                dynArray->capacity *= growthFactor;
+                return;
+            }
+
+        case ARR_ERROR:
+            fprintf(stderr, "ERROR IN 'augmentDynamicArray': %s\n", dynArray->contents.error);
+
+        default:
+            assert(false);
     }
+}
+
+int removeFromArray(DynamicArray* dynArray, int index) {
+    if (dynArray->tag == ARR_ERROR) {
+        fprintf(stderr, "Found an error'd array while trying to remove: %s", dynArray->contents.error);
+        assert(false);
+    }
+    if (index > dynArray->size) {
+        return -1;
+    }
+
+    if (index == dynArray->size) {
+        dynArray->size -= 1;
+        return 0;
+    }
+
+    void* check = NULL;
+    check = memmove(
+            (char*)dynArray->contents.data + (dynArray->memberSize * index),
+            (char*)dynArray->contents.data + (dynArray->memberSize * (index + 1)),
+            dynArray->memberSize * ((dynArray->size - index) - 1)
+            );
+
+    if (check == NULL) {
+        dynArray->tag = ARR_ERROR;
+        strncpy(dynArray->contents.error, "Unable to move right side of array while removing", sizeof(dynArray->contents.error) - 1);
+        return -1;
+    }
+
+    dynArray->size -= 1;
+    return 0;
 }
 
 bool isEven(int num) {

@@ -4,34 +4,23 @@ void renderPlayer(struct game* game) {
     mvaddstr(game->player.posY, game->player.posX, "_/|\\_");
 }
 
-void renderEnemies(struct game* game) {
-    if (game->hostile.enemies.first != NULL && game->hostile.enemies.last != NULL) {
-        Node* currentNode = game->hostile.enemies.first;
-
-        while(1) {
-            mvaddstr(((struct enemy*)currentNode->data)->posY, ((struct enemy*)currentNode->data)->posX, "*");
-            if (currentNode == game->hostile.enemies.last) {
-                break;
-            }
-            currentNode = currentNode->next;
-        }
+void renderEnemies(DynamicArray* dynArray) {
+    if (dynArray->tag != ARR_OK) {
+        return;
     }
 
+    for(int i = 0; i < dynArray->size; i++) {
+        mvaddstr(((struct enemy*)dynArray->contents.data)[i].posY, ((struct enemy*)dynArray->contents.data)[i].posX, "*");
+    }
 }
 
+void renderProjectiles(DynamicArray* dynArray) {
+    if (dynArray->tag != ARR_OK) {
+        return;
+    }
 
-
-void renderProjectiles(struct game* game) {
-    if (game->player.projectiles.first != NULL && game->player.projectiles.last != NULL) {
-        Node* currentNode = game->player.projectiles.first;
-
-        while(1) {
-            mvaddstr(((struct projectile*)currentNode->data)->posY, ((struct projectile*)currentNode->data)->posX, "+");
-            if (currentNode == game->player.projectiles.last) {
-                break;
-            }
-            currentNode = currentNode->next;
-        }
+    for(int i = 0; i < dynArray->size; i++) {
+        mvaddstr(((struct projectile*)dynArray->contents.data)[i].posY, ((struct projectile*)dynArray->contents.data)[i].posX, "+");
     }
 }
 
@@ -43,3 +32,4 @@ void renderBarriers(struct game* game) {
         }
     }
 }
+

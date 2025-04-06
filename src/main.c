@@ -1,6 +1,4 @@
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <assert.h>
 #include <ncurses.h>
 #include <unistd.h>
@@ -13,14 +11,6 @@
 #include "../include/util.h"
 #include "../include/config.h"
 
-// #include "../include/enemy.h"
-
-// C doesn't come with true or false out of the box, only 1 or 0, so usually
-// they'd be defined here but curses.h come with those already
-/*#define     false                   0*/
-/*#define     true                    1*/
-
-// Function definitions go here so main can be at the top
 Config promptConfig();
 void procUserControl(struct game* game);
 void update(struct game* game);
@@ -43,16 +33,15 @@ int main() {
     while(!game.shouldExit) {
         // Every frame this shall loop
 
-        procUserControl(&game); // right now this is rendering changes
+        procUserControl(&game); // right now this is rendering changes (Let this be
+                                // a lesson that comments get bugs, this hasn't been true forever)
         update(&game);
         render(&game);
-        // usleep(20000);
-        usleep(60000);
+        usleep(20000);
     }
-    
 
-
-    removeAllNodes(&game.player.projectiles);
+    free(game.player.projectiles.contents.data);
+    free(game.hostile.enemies.contents.data);
     endwin();
     return 0;
 }
@@ -63,16 +52,17 @@ void render(struct game* game) {
     erase();
     renderPlayer(game);
     renderBarriers(game);
-    renderEnemies(game);
-    renderProjectiles(game);
+    renderEnemies(&game->hostile.enemies);
+    renderProjectiles(&game->player.projectiles);
 }
 
 void update(struct game* game) {
     updatePlayerState(game);
-    updateProjectileState(game);
-    checkIfPlayerProjectileHitBarrier(game);
-    checkIfProjectilesHitEnemy(game);
-    removeProjectilesOutOfBounds(game);
+    // updateProjectileState(game);
+    updateProjectileState(&game->player.projectiles);
+    checkIfPlayerProjectileHitBarrier(&game->player.projectiles, game->barriers);
+    checkIfProjectilesHitEnemy(&game->player.projectiles, &game->hostile.enemies);
+    removeProjectilesOutOfBounds(&game->player.projectiles);
 }
 
 
@@ -98,7 +88,7 @@ void procUserControl(struct game* game) {
         proj.speed = -PROJECTILE_SPEED;
         proj.posY = getmaxy(game->win) - 4; // 4 is an offset so it's not at the very bottom
         proj.posX = game->player.posX + SPACE_TO_PLAYER_CENTER;
-        spawnProjectile(&game->player.projectiles, proj);
+        pushToDynArray(&game->player.projectiles, &proj);
     }
 
     game->player.posX += game->player.dirX;

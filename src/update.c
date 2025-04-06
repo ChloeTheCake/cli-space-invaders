@@ -6,160 +6,76 @@ void updatePlayerState(struct game* game) {
 
 }
 
-void updateProjectileState(struct game* game) {
-    if (game->player.projectiles.first != NULL && game->player.projectiles.last != NULL) {
-        Node* currentNode = game->player.projectiles.first;
-
-        while(1) {
-            ((struct projectile*)currentNode->data)->posY += ((struct projectile*)currentNode->data)->speed;
-            if (currentNode == game->player.projectiles.last) {
-                break;
-            }
-            currentNode = currentNode->next;
-        }
-    }
-}
-
-void removeProjectilesOutOfBounds(struct game* game) {
-    if (game->player.projectiles.first == NULL || game->player.projectiles.last == NULL) {
+void updateProjectileState(DynamicArray* dynArray) {
+    if (dynArray->tag != ARR_OK) {
         return;
     }
 
-    Node* currentNode = game->player.projectiles.first;
-    for(int index = 0; currentNode != NULL; index++) {
-        if (((struct projectile*)currentNode->data)->posY > -2) {
-            currentNode = currentNode->next;
+    for(int i = 0; i < dynArray->size; i++) {
+        ((struct projectile*)dynArray->contents.data)[i].posY += ((struct projectile*)dynArray->contents.data)[i].speed;
+    }
+}
+
+void removeProjectilesOutOfBounds(DynamicArray* projs) {
+    if (projs->tag != ARR_OK) {
+        return;
+    }
+
+    for(int i = 0; i < projs->size; i++) {
+        if (((struct projectile*)projs->contents.data)[i].posY > -2) {
             continue;
         }
-        else {
-            currentNode = removeAtIndex(&game->player.projectiles, index);
+        removeFromArray(projs, i);
+    }
+}
+
+void checkIfProjectilesHitEnemy(DynamicArray* projs, DynamicArray* enemies) {
+    if (projs->tag != ARR_OK || enemies->tag != ARR_OK) {
+        return;
+    }
+
+    for(int projIndex = 0; projIndex < projs->size; projIndex++) {
+        for(int enemyIndex = 0; enemyIndex < enemies->size; enemyIndex++) {
+            if (((struct projectile*)projs->contents.data)[projIndex].posY
+                    != ((struct enemy*)enemies->contents.data)[enemyIndex].posY) {
+                continue;
+            }
+            if (((struct projectile*)projs->contents.data)[projIndex].posX
+                    < ((struct enemy*)enemies->contents.data)[enemyIndex].posX
+                    || ((struct projectile*)projs->contents.data)[projIndex].posX
+                    > ((struct enemy*)enemies->contents.data)[enemyIndex].posX
+                    + ((struct enemy*)enemies->contents.data)[enemyIndex].length) {
+                continue;
+            }
+            removeFromArray(enemies, enemyIndex);
+            removeFromArray(projs, projIndex);
+            projIndex--;
+            break;
         }
     }
 }
 
-// For the record this function is totally shit and needs rebuilt!
-void checkIfProjectilesHitEnemy(struct game* game) {
-    if (game->player.projectiles.first == NULL || game->player.projectiles.last == NULL) {
-        return;
-    }
-    if (game->hostile.enemies.first == NULL || game->hostile.enemies.last == NULL) {
+void checkIfPlayerProjectileHitBarrier(DynamicArray* projs, struct barrier barriers[]) {
+    if (projs->tag != ARR_OK) {
         return;
     }
 
-    Node* currentProjectileNode = game->player.projectiles.first;
-    // start interating over projectiles
-    for(int projIndex; currentProjectileNode != NULL; projIndex++) {
-        // Start iterating over enemies
-        Node* currentEnemyNode = game->hostile.enemies.first;
-        for(int enemyIndex; currentEnemyNode != NULL; enemyIndex++) {
-            if (((struct projectile*)currentProjectileNode->data)->posY
-                    != ((struct enemy*)currentEnemyNode->data)->posY) {
-                currentEnemyNode = currentEnemyNode->next;
-                continue;
-            }
-            // check if it's to the left or right of an enemy, where the right of an
-            // enemy is it's position + it's length
-            if (((struct projectile*)currentProjectileNode->data)->posX
-                    < ((struct enemy*)currentEnemyNode->data)->posX
-                    || ((struct projectile*)currentProjectileNode->data)->posX
-                    > ((struct enemy*)currentEnemyNode->data)->posX
-                    + ((struct enemy*)currentEnemyNode->data)->length) {
-                currentEnemyNode = currentEnemyNode->next;
-                continue;
-            }
-            // Else we know it's a hit
-            currentEnemyNode = removeAtIndex(&game->hostile.enemies, enemyIndex);
-            currentProjectileNode = removeAtIndex(&game->player.projectiles, projIndex);
-        }
-        currentProjectileNode = currentProjectileNode->next;
-    }
-}
-
-// Lets make this a better version of the one above JFC (post: it was)
-void checkIfPlayerProjectileHitBarrier(struct game* game) {
-    int index = 0;
-    if (game->player.projectiles.first == NULL || game->player.projectiles.last == NULL) {
-        return;
-    }
-
-    // Iterate over all barriers
     for(int i = 0; i < TOTAL_BARRIERS; i++) {
-        // Continue if the barrier is dead
-        if (game->barriers[i].health == 0) {
+        if (barriers[i].health <= 0) {
             continue;
         }
-        index = 0;
-        Node *currentNode = game->player.projectiles.first;
-        // Iterate over all projectiles
-        for(; currentNode != NULL;) {
 
-            if (((struct projectile*)currentNode->data)->posY != game->barriers[i].posY) {
-                currentNode = currentNode->next;
-                index++;
+        for(int projIndex = 0; projIndex < projs->size; projIndex++) {
+            if (((struct projectile*)projs->contents.data)[projIndex].posY != barriers[i].posY) {
                 continue;
             }
-            if (((struct projectile*)currentNode->data)->posX < game->barriers[i].posX
-                    || ((struct projectile*)currentNode->data)->posX > game->barriers[i].posX + BARRIER_WIDTH) {
-                currentNode = currentNode->next;
-                index++;
+            if (((struct projectile*)projs->contents.data)[projIndex].posX < barriers[i].posX
+                    || ((struct projectile*)projs->contents.data)[projIndex].posX > barriers[i].posX + BARRIER_WIDTH) {
                 continue;
             }
-            currentNode = currentNode->next;
-            removeAtIndex(&game->player.projectiles, index);
+            removeFromArray(projs, projIndex);
+            projIndex--;
         }
     }
-
-
-
-
-
-
-
-
-
-    // NEW
-    // if (game->player.projectiles.first == NULL || game->player.projectiles.last == NULL) {
-    //     return;
-    // }
-    //
-    //
-    //
-    // // Loop over all barriers
-    // for(int i = 0; i < TOTAL_BARRIERS; i++) {
-    //     if (game->player.projectiles.first == NULL || game->player.projectiles.last == NULL) {
-    //         return;
-    //     }
-    //     Node* currentNode = game->player.projectiles.first;
-    //     // for loop for index tracking
-    //     for(int index = 0; true; index++) {
-    //         // continue early if projectile posX isn't within the barrier X bounds... per barrier
-    //         if (((struct projectile*)currentNode->data)->posX < game->barriers[i].posX
-    //                 || ((struct projectile*)currentNode->data)->posX > game->barriers[i].posX + BARRIER_WIDTH) {
-    //             if (currentNode == game->player.projectiles.last) {
-    //                 break;
-    //             }
-    //             currentNode = currentNode->next;
-    //             continue;
-    //         }
-    //         if (((struct projectile*)currentNode->data)->posY != game->barriers[i].posY) {
-    //             if (currentNode == game->player.projectiles.last) {
-    //                 break;
-    //             }
-    //             currentNode = currentNode->next;
-    //             continue;
-    //         }
-    //         // At this point the projectile occupies the same space as a barrier does... At least in theory
-    //         if (currentNode == game->player.projectiles.last) {
-    //             removeAtIndex(&game->player.projectiles, index);
-    //             break;
-    //         }
-    //         else {
-    //             currentNode = currentNode->next;
-    //             removeAtIndex(&game->player.projectiles, index);
-    //             // index--;
-    //             continue;
-    //         }
-    //     }
-    // }
 }
 

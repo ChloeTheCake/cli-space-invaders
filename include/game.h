@@ -32,8 +32,6 @@ struct game {
     struct barrier barriers[TOTAL_BARRIERS];
 
     int level;
-    //struct nodeContainer projectiles;
-
     bool shouldExit;
 };
 
@@ -41,10 +39,4 @@ struct game {
 
 void createNewGame(struct game* game);
 void createBarriers(struct game* game);
-
-
-
-
-
-
 

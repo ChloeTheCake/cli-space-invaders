@@ -1,13 +1,8 @@
 #include <stdbool.h>
 #include <ncurses.h>
 
-struct game;
 #include "../include/entities.h"
 #include "../include/game.h"
-
-void spawnProjectile(NodeContainer* nodeCon, struct projectile proj) {
-    addNodeToGenericList(nodeCon, &proj, sizeof(proj));
-}
 
 // 11x5 enemies with one space between them so 22x5
 void spawnEnemiesOnNewscreen(struct game* game) {
@@ -35,8 +30,7 @@ void spawnEnemiesOnNewscreen(struct game* game) {
             enemyTemplate.posY = i + 2;
             enemyTemplate.length = 1;
 
-
-            addNodeToGenericList(&game->hostile.enemies, &enemyTemplate, sizeof(struct enemy));
+            pushToDynArray(&game->hostile.enemies, &enemyTemplate);
         }
     }
 }

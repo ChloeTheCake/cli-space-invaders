@@ -1,17 +1,28 @@
 #pragma once
+#include <stdbool.h>
 
-typedef struct node {
-    struct node* next;
+enum dynTags {
+    ARR_OK,
+    ARR_ERROR
+};
+
+union dynData {
     void* data;
-} Node;
+    char error[256];
+};
 
-typedef struct nodeContainer {
-    Node* first;
-    Node* last;
-} NodeContainer;
+typedef struct dynamicArray {
+    int size;
+    int capacity;
+    int memberSize;
+    enum dynTags tag;
+    union dynData contents;
+} DynamicArray;
+
 
 // Functions
-void addNodeToGenericList(NodeContainer* nodeCon, void* data, int dataSize);
-Node* removeAtIndex(NodeContainer* nodeCon, int index);
-void removeAllNodes(NodeContainer* nodeCon);
 bool isEven(int num);
+DynamicArray initDynamicArray(int typeSize);
+void pushToDynArray(DynamicArray* dynArray, void* data);
+void augmentDynamicArray(DynamicArray* dynArray);
+int removeFromArray(DynamicArray* dynArray, int index);
