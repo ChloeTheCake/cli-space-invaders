@@ -1,14 +1,13 @@
 #pragma once
 
+#include "util.h"
 #define    MAX_ITERS    216
 
 #include "game.h"
 
 // Functions
 void updatePlayerState(struct game* game);
-void updateProjectileState(struct game* game);
-void removeProjectilesOutOfBounds(struct game* game);
-
-void checkIfProjectilesHitEnemy(struct game* game);
-void checkIfPlayerProjectileHitBarrier(struct game* game);
-//void removeEnemyFromWindow();
+void updateProjectileState(DynamicArray* dynArray);
+void removeProjectilesOutOfBounds(DynamicArray* projs);
+void checkIfProjectilesHitEnemy(DynamicArray* projs, DynamicArray* enemies);
+void checkIfPlayerProjectileHitBarrier(DynamicArray* projs, struct barrier barriers[]);

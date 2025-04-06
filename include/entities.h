@@ -15,7 +15,8 @@ struct player {
     int dirX;
     int posX;
     int posY;
-    NodeContainer projectiles;
+    // NodeContainer projectiles;
+    DynamicArray projectiles;
 };
 
 struct enemy {
@@ -27,8 +28,8 @@ struct enemy {
 };
 
 struct hostile {
-    NodeContainer enemies;
-    NodeContainer enemyProjectiles;
+    DynamicArray enemies;
+    DynamicArray enemyProjectiles;
 };
 
 // Here be the barriers, I figured they're entities too
@@ -39,5 +40,5 @@ struct barrier {
     int posY;
 };
 
-void spawnProjectile(NodeContainer* nodeCon, struct projectile proj);
 void spawnEnemiesOnNewscreen(struct game* game);
+
