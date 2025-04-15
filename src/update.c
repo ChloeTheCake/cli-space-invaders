@@ -79,3 +79,28 @@ void checkIfPlayerProjectileHitBarrier(DynamicArray* projs, struct barrier barri
     }
 }
 
+// This is kinda long...
+void moveEnemies(WINDOW* win, DynamicArray* enemies, int start, int end, int dirX, int dirY, bool shouldWrap) {
+    if (enemies->tag != ARR_OK) {
+        return;
+    }
+    if (end > enemies->size || start > enemies->size || start < 0) {
+        fprintf(stderr, "ERROR: invalid indexes passed to moveEnemies");
+    }
+
+    int rightWall = getmaxx(win);
+
+    for(int i = start; i < end; i++) {
+        ((struct enemy*)enemies->contents.data)[i].posX += dirX;
+        ((struct enemy*)enemies->contents.data)[i].posY += dirY;
+
+        if (shouldWrap) {
+            if (((struct enemy*)enemies->contents.data)[i].posX <= 0
+                    || ((struct enemy*)enemies->contents.data)[i].posX >= rightWall) {
+                moveEnemies(win, enemies, start, end, 0, 1, shouldWrap);
+                dirX *= -1;
+            }
+        }
+    }
+}
+

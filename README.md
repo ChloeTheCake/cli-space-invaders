@@ -1,8 +1,11 @@
 # cli-space-invaders
 
-# NOTE: Master branch WILL break, I keep forgetting to change branches and stuff
+#### Maintained by CaylaTheCake, so me
 
-## NOTE2: Master will break less because I've been smarter :3
+There are multiple ways to build this, at the moment it requires that you have a directory
+called 'obj' in src, which git won't keep track of if it's empty so make sure you make that
+directory before building. The shell.nix file is a dev shell which you need for ncurses on
+NixOS, then create the directory 'obj' in the src directory and run make to build
 
 ### TODO:
 - ~~Fix a bug where it gets stuck in a loop in the function checkIfProjectilesHitEnemy~~
